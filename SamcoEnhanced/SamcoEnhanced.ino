@@ -373,7 +373,7 @@ bool buttonPressed = false;                      // Sanity check.
     #endif // USES_SOLENOID
     #ifdef USES_DISPLAY
     bool serialDisplayChange = false;                // Signal of pending display update, sent by Core 2 to be used by Core 1 in dual core configs
-    uint16_t serialLifeCount = 0; //Changed from unit8_t for games with higer life numbers (Aliens Armageddon have 1000 for lifecount)
+    uint16_t serialLifeCount = 0; //Changed from unit8_t for games with higer life Values (Aliens Armageddon have 1000 for lifecount)
     uint8_t serialAmmoCount = 0;
     uint16_t VidaMax = 0; //Max life value
     uint16_t Porcentaje = 0; //Value % to show in lifebar
@@ -1430,7 +1430,12 @@ void ExecRunMode()
                 // so just do it here using the signal sent by it.
                 if(serialDisplayChange) {
                     if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Ammo) { OLED.PrintAmmo(serialAmmoCount); }
+					else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life && OLED.lifeBar){ OLED.PrintLife(Porcentaje); } 
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life) { OLED.PrintLife(serialLifeCount); }
+                    else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both && OLED.lifeBar) {
+                      OLED.PrintAmmo(serialAmmoCount);
+                      OLED.PrintLife(Porcentaje);
+                    } 
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both) {
                       OLED.PrintAmmo(serialAmmoCount);
                       OLED.PrintLife(serialLifeCount);
