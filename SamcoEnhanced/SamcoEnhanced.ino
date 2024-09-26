@@ -373,8 +373,10 @@ bool buttonPressed = false;                      // Sanity check.
     #endif // USES_SOLENOID
     #ifdef USES_DISPLAY
     bool serialDisplayChange = false;                // Signal of pending display update, sent by Core 2 to be used by Core 1 in dual core configs
-    uint8_t serialLifeCount = 0;
+    uint16_t serialLifeCount = 0; //Changed from unit8_t for games with higer life numbers (Aliens Armageddon have 1000 for lifecount)
     uint8_t serialAmmoCount = 0;
+    uint16_t VidaMax = 0; //Max life value
+    uint16_t Porcentaje = 0; //Value % to show in lifebar
     #endif // USES_DISPLAY
 #endif // MAMEHOOKER
 
@@ -3264,6 +3266,7 @@ void SerialProcessing()
                 }
                 if(Serial.read() == 'B') {
                     OLED.lifeBar = true;
+		    VidaMax = 0; //rese max life to 0 whan game ghange
                 } else { OLED.lifeBar = false; }
                 // prevent glitching if currently in pause mode
                 if(gunMode == GunMode_Run) {
@@ -3575,6 +3578,10 @@ void SerialProcessing()
                         }
                     }
                     serialLifeCount = atoi(serialInputS);
+		    if (OLED.lifeBar){
+			if (serialLifeCount > VidaMax) { VidaMax = serialLifeCount; }
+			Porcentaje = (100 * serialLifeCount) / VidaMax; 
+		    }
                     break;
                   }
                 }
