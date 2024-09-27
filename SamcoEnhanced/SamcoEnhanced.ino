@@ -375,8 +375,8 @@ bool buttonPressed = false;                      // Sanity check.
     bool serialDisplayChange = false;                // Signal of pending display update, sent by Core 2 to be used by Core 1 in dual core configs
     uint16_t serialLifeCount = 0; //Changed from unit8_t for games with higer life Values (Aliens Armageddon have 1000 for lifecount)
     uint8_t serialAmmoCount = 0;
-    uint16_t VidaMax = 0; //Max life value
-    uint16_t Porcentaje = 0; //Value % to show in lifebar
+    uint16_t MaxLife = 0; //Max life value
+    uint16_t LifePercentage = 0; //Value % to show in lifebar
     #endif // USES_DISPLAY
 #endif // MAMEHOOKER
 
@@ -1430,11 +1430,11 @@ void ExecRunMode()
                 // so just do it here using the signal sent by it.
                 if(serialDisplayChange) {
                     if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Ammo) { OLED.PrintAmmo(serialAmmoCount); }
-					else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life && OLED.lifeBar){ OLED.PrintLife(Porcentaje); } 
+					else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life && OLED.lifeBar){ OLED.PrintLife(LifePercentage); } 
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Life) { OLED.PrintLife(serialLifeCount); }
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both && OLED.lifeBar) {
                       OLED.PrintAmmo(serialAmmoCount);
-                      OLED.PrintLife(Porcentaje);
+                      OLED.PrintLife(LifePercentage);
                     } 
                     else if(OLED.serialDisplayType == ExtDisplay::ScreenSerial_Both) {
                       OLED.PrintAmmo(serialAmmoCount);
@@ -3271,7 +3271,7 @@ void SerialProcessing()
                 }
                 if(Serial.read() == 'B') {
                     OLED.lifeBar = true;
-		    VidaMax = 0; //rese max life to 0 whan game ghange
+		    MaxLife = 0; //rese max life to 0 whan game ghange
                 } else { OLED.lifeBar = false; }
                 // prevent glitching if currently in pause mode
                 if(gunMode == GunMode_Run) {
@@ -3584,8 +3584,8 @@ void SerialProcessing()
                     }
                     serialLifeCount = atoi(serialInputS);
 		    if (OLED.lifeBar){
-			if (serialLifeCount > VidaMax) { VidaMax = serialLifeCount; }
-			Porcentaje = (100 * serialLifeCount) / VidaMax; 
+			if (serialLifeCount > MaxLife) { MaxLife = serialLifeCount; }
+			LifePercentage = (100 * serialLifeCount) / MaxLife; 
 		    }
                     break;
                   }
